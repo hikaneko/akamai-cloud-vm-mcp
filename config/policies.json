@@ -1,3 +1,13 @@
 {
-  "policies": []
+  "policies": [
+    {
+      "name": "require-confirmation-inbound",
+      "policyType": "custom-code-inbound",
+      "handler": {
+        "export": "default",
+        "module": "$import(./modules/require-confirmation-inbound)",
+        "options": {}
+      }
+    }
+  ]
 }
