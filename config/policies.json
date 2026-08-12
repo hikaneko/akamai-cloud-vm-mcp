@@ -1,3 +1,35 @@
 {
-  "policies": []
+  "policies": [
+    {
+      "handler": {
+        "export": "AuditLogInboundPolicy",
+        "module": "$import(@zuplo/runtime)",
+        "options": {
+          "eventTypeBase": "com.akamai.cloud-vm-mcp",
+          "include": {
+            "geolocation": true,
+            "ipAddress": true,
+            "queryParams": true,
+            "user": true
+          },
+          "samplingRate": 1
+        }
+      },
+      "name": "audit-log-inbound-1",
+      "policyType": "audit-log-inbound"
+    },
+    {
+      "handler": {
+        "export": "IpAddressRestrictionInboundPolicy",
+        "module": "$import(@zuplo/runtime)",
+        "options": {
+          "allow": [
+            "$env(ALLOWED_IP_1)"
+          ]
+        }
+      },
+      "name": "ip-address-restriction-inbound",
+      "policyType": "ip-address-restriction-inbound"
+    }
+  ]
 }

@@ -63,7 +63,9 @@
             }
           },
           "policies": {
-            "inbound": []
+            "inbound": [
+              "audit-log-inbound-1"
+            ]
           },
           "mcp": {
             "type": "tool"
@@ -744,7 +746,9 @@
             }
           },
           "policies": {
-            "inbound": []
+            "inbound": [
+              "ip-address-restriction-inbound"
+            ]
           }
         },
         "operationId": "akamai-cloud-vm-mcp-server"
