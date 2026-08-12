@@ -1,8 +1,448 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "version": "1.0.0",
-    "title": "My Zuplo API"
+    "version": "0.1.0",
+    "title": "Akamai Cloud VM MCP"
   },
-  "paths": {}
+  "paths": {
+    "/linode/instances": {
+      "x-zuplo-path": { "pathMode": "open-api" },
+      "get": {
+        "summary": "Linodes List",
+        "description": "Returns a paginated list of Linode Compute Instances (VMs) you have permission to view.",
+        "operationId": "getLinodeInstances",
+        "tags": ["Linode Instances"],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "The page of results to return.",
+            "required": false,
+            "schema": { "type": "integer", "minimum": 1, "default": 1 }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "Number of items to return per page (25-100).",
+            "required": false,
+            "schema": { "type": "integer", "minimum": 25, "maximum": 100, "default": 100 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of Linode Instances.",
+            "content": { "application/json": { "schema": { "type": "object" } } }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": { "baseUrl": "https://api.linode.com/v4" }
+          },
+          "policies": { "inbound": [] },
+          "mcp": { "type": "tool" }
+        }
+      },
+      "post": {
+        "summary": "Linode Create",
+        "description": "Creates a new Linode Compute Instance (VM). Incurs a charge on the account. Requires at minimum a `type` and `region`; supply either an `image` (with `root_pass`) or a `stackscript_id` to provision it, or omit both to create an empty Linode.",
+        "operationId": "createLinodeInstance",
+        "tags": ["Linode Instances"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["type", "region"],
+                "properties": {
+                  "type": { "type": "string", "description": "The Linode Type (plan) ID, e.g. g6-standard-2. See GET /linode/types for options.", "example": "g6-standard-2" },
+                  "region": { "type": "string", "description": "The Region ID to deploy into, e.g. us-east. See GET /regions for options.", "example": "us-east" },
+                  "image": { "type": "string", "description": "The Image ID to deploy from, e.g. linode/debian12. Mutually exclusive with backup_id.", "example": "linode/debian12" },
+                  "label": { "type": "string", "description": "Label for the new Linode.", "example": "my-linode" },
+                  "root_pass": { "type": "string", "description": "Root password for the new Linode. Required when deploying from an image.", "format": "password" },
+                  "authorized_keys": { "type": "array", "items": { "type": "string" }, "description": "SSH public keys to install for the root user." },
+                  "authorized_users": { "type": "array", "items": { "type": "string" }, "description": "Usernames (with SSH keys on their Linode profile) to authorize on the new Linode." },
+                  "stackscript_id": { "type": "integer", "description": "StackScript ID to deploy with, as an alternative to a plain image." },
+                  "backup_id": { "type": "integer", "description": "Deploy from an existing Linode backup ID instead of an image." },
+                  "backups_enabled": { "type": "boolean", "description": "Enroll the new Linode in the Backup service (additional charge)." },
+                  "private_ip": { "type": "boolean", "description": "Assign a private IPv4 address to the new Linode." },
+                  "booted": { "type": "boolean", "description": "Whether to boot the Linode immediately after creation. Defaults to true." },
+                  "tags": { "type": "array", "items": { "type": "string" }, "description": "Tags to apply to the new Linode." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The newly created Linode.",
+            "content": { "application/json": { "schema": { "type": "object" } } }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": { "baseUrl": "https://api.linode.com/v4" }
+          },
+          "policies": { "inbound": [] },
+          "mcp": { "type": "tool" }
+        }
+      }
+    },
+    "/linode/instances/{linodeId}": {
+      "x-zuplo-path": { "pathMode": "open-api" },
+      "parameters": [
+        {
+          "name": "linodeId",
+          "in": "path",
+          "description": "ID of the Linode Instance.",
+          "required": true,
+          "schema": { "type": "integer" }
+        }
+      ],
+      "get": {
+        "summary": "Linode View",
+        "description": "Gets details of a specific Linode Instance by ID (status, IPs, specs, region, type, etc).",
+        "operationId": "getLinodeInstance",
+        "tags": ["Linode Instances"],
+        "responses": {
+          "200": {
+            "description": "The Linode Instance.",
+            "content": { "application/json": { "schema": { "type": "object" } } }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": { "baseUrl": "https://api.linode.com/v4" }
+          },
+          "policies": { "inbound": [] },
+          "mcp": { "type": "tool" }
+        }
+      },
+      "put": {
+        "summary": "Linode Update",
+        "description": "Updates settings on a Linode Instance, such as its label, tags, or alert thresholds.",
+        "operationId": "updateLinodeInstance",
+        "tags": ["Linode Instances"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "label": { "type": "string", "description": "New label for the Linode." },
+                  "tags": { "type": "array", "items": { "type": "string" }, "description": "Replacement list of tags for the Linode." },
+                  "group": { "type": "string", "description": "Deprecated display-grouping label." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated Linode.",
+            "content": { "application/json": { "schema": { "type": "object" } } }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": { "baseUrl": "https://api.linode.com/v4" }
+          },
+          "policies": { "inbound": [] },
+          "mcp": { "type": "tool" }
+        }
+      },
+      "delete": {
+        "summary": "Linode Delete",
+        "description": "Permanently deletes a Linode Instance. Destructive and cannot be undone: removes all disks, backups, configs, and IP addresses.",
+        "operationId": "deleteLinodeInstance",
+        "tags": ["Linode Instances"],
+        "responses": {
+          "200": {
+            "description": "Delete successful.",
+            "content": { "application/json": { "schema": { "type": "object" } } }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": { "baseUrl": "https://api.linode.com/v4" }
+          },
+          "policies": { "inbound": [] },
+          "mcp": { "type": "tool" }
+        }
+      }
+    },
+    "/linode/instances/{linodeId}/boot": {
+      "x-zuplo-path": { "pathMode": "open-api" },
+      "parameters": [
+        {
+          "name": "linodeId",
+          "in": "path",
+          "description": "ID of the Linode Instance to boot.",
+          "required": true,
+          "schema": { "type": "integer" }
+        }
+      ],
+      "post": {
+        "summary": "Linode Boot",
+        "description": "Boots a Linode Instance. If no config_id is given, the Linode's existing/last-used config profile is used.",
+        "operationId": "bootLinodeInstance",
+        "tags": ["Linode Instances"],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "config_id": { "type": "integer", "description": "The Config profile ID to boot into." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Boot started.",
+            "content": { "application/json": { "schema": { "type": "object" } } }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": { "baseUrl": "https://api.linode.com/v4" }
+          },
+          "policies": { "inbound": [] },
+          "mcp": { "type": "tool" }
+        }
+      }
+    },
+    "/linode/instances/{linodeId}/reboot": {
+      "x-zuplo-path": { "pathMode": "open-api" },
+      "parameters": [
+        {
+          "name": "linodeId",
+          "in": "path",
+          "description": "ID of the Linode Instance to reboot.",
+          "required": true,
+          "schema": { "type": "integer" }
+        }
+      ],
+      "post": {
+        "summary": "Linode Reboot",
+        "description": "Reboots a Linode Instance. If no config_id is given, the last-booted config profile is used.",
+        "operationId": "rebootLinodeInstance",
+        "tags": ["Linode Instances"],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "config_id": { "type": "integer", "description": "The Config profile ID to reboot into." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reboot started.",
+            "content": { "application/json": { "schema": { "type": "object" } } }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": { "baseUrl": "https://api.linode.com/v4" }
+          },
+          "policies": { "inbound": [] },
+          "mcp": { "type": "tool" }
+        }
+      }
+    },
+    "/linode/instances/{linodeId}/shutdown": {
+      "x-zuplo-path": { "pathMode": "open-api" },
+      "parameters": [
+        {
+          "name": "linodeId",
+          "in": "path",
+          "description": "ID of the Linode Instance to shut down.",
+          "required": true,
+          "schema": { "type": "integer" }
+        }
+      ],
+      "post": {
+        "summary": "Linode Shut Down",
+        "description": "Shuts down a Linode Instance.",
+        "operationId": "shutdownLinodeInstance",
+        "tags": ["Linode Instances"],
+        "responses": {
+          "200": {
+            "description": "Shutdown started.",
+            "content": { "application/json": { "schema": { "type": "object" } } }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": { "baseUrl": "https://api.linode.com/v4" }
+          },
+          "policies": { "inbound": [] },
+          "mcp": { "type": "tool" }
+        }
+      }
+    },
+    "/linode/instances/{linodeId}/resize": {
+      "x-zuplo-path": { "pathMode": "open-api" },
+      "parameters": [
+        {
+          "name": "linodeId",
+          "in": "path",
+          "description": "ID of the Linode Instance to resize.",
+          "required": true,
+          "schema": { "type": "integer" }
+        }
+      ],
+      "post": {
+        "summary": "Linode Resize",
+        "description": "Resizes a Linode Instance to a different Type (plan). Any running/queued actions must finish first, and the account must have no outstanding balance.",
+        "operationId": "resizeLinodeInstance",
+        "tags": ["Linode Instances"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["type"],
+                "properties": {
+                  "type": { "type": "string", "description": "The Linode Type (plan) ID to resize to, e.g. g6-standard-2.", "example": "g6-standard-2" },
+                  "allow_auto_disk_resize": { "type": "boolean", "description": "Automatically resize disks to fit the new plan. Defaults to true.", "default": true }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resize started.",
+            "content": { "application/json": { "schema": { "type": "object" } } }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": { "baseUrl": "https://api.linode.com/v4" }
+          },
+          "policies": { "inbound": [] },
+          "mcp": { "type": "tool" }
+        }
+      }
+    },
+    "/linode/instances/{linodeId}/clone": {
+      "x-zuplo-path": { "pathMode": "open-api" },
+      "parameters": [
+        {
+          "name": "linodeId",
+          "in": "path",
+          "description": "ID of the source Linode Instance to clone.",
+          "required": true,
+          "schema": { "type": "integer" }
+        }
+      ],
+      "post": {
+        "summary": "Linode Clone",
+        "description": "Clones a Linode's disks/configs to a new or existing Linode. Cloning to a new Linode incurs a charge and requires `region` and `type`. Cloning to an existing Linode requires `linode_id` instead.",
+        "operationId": "cloneLinodeInstance",
+        "tags": ["Linode Instances"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "region": { "type": "string", "description": "Region for the new Linode. Required (and only valid) when cloning to a new Linode.", "example": "us-east" },
+                  "type": { "type": "string", "description": "Linode Type (plan) for the new Linode. Required (and only valid) when cloning to a new Linode.", "example": "g6-standard-2" },
+                  "linode_id": { "type": "integer", "description": "ID of an existing Linode to clone into, as an alternative to region/type." },
+                  "label": { "type": "string", "description": "Label for the new Linode. Only valid when cloning to a new Linode." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The new or updated Linode.",
+            "content": { "application/json": { "schema": { "type": "object" } } }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": { "baseUrl": "https://api.linode.com/v4" }
+          },
+          "policies": { "inbound": [] },
+          "mcp": { "type": "tool" }
+        }
+      }
+    },
+    "/mcp": {
+      "post": {
+        "summary": "Akamai Cloud VM MCP Server",
+        "description": "MCP endpoint exposing Linode Compute Instance management as tools. Clients must send their own Linode Personal Access Token as an `Authorization: Bearer <token>` header; it is forwarded untouched to the Linode API and never stored by this gateway.",
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "mcpServerHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "name": "akamai-cloud-vm-mcp",
+              "version": "0.1.0",
+              "operations": [
+                { "file": "./config/routes.oas.json", "id": "getLinodeInstances" },
+                { "file": "./config/routes.oas.json", "id": "createLinodeInstance" },
+                { "file": "./config/routes.oas.json", "id": "getLinodeInstance" },
+                { "file": "./config/routes.oas.json", "id": "updateLinodeInstance" },
+                { "file": "./config/routes.oas.json", "id": "deleteLinodeInstance" },
+                { "file": "./config/routes.oas.json", "id": "bootLinodeInstance" },
+                { "file": "./config/routes.oas.json", "id": "rebootLinodeInstance" },
+                { "file": "./config/routes.oas.json", "id": "shutdownLinodeInstance" },
+                { "file": "./config/routes.oas.json", "id": "resizeLinodeInstance" },
+                { "file": "./config/routes.oas.json", "id": "cloneLinodeInstance" }
+              ]
+            }
+          },
+          "policies": { "inbound": [] }
+        }
+      }
+    }
+  }
 }
