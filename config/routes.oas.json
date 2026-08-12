@@ -62,11 +62,11 @@
               "baseUrl": "https://api.linode.com/v4"
             }
           },
-          "mcp": {
-            "type": "tool"
-          },
           "policies": {
             "inbound": []
+          },
+          "mcp": {
+            "type": "tool"
           }
         }
       },
@@ -180,11 +180,11 @@
               "baseUrl": "https://api.linode.com/v4"
             }
           },
-          "mcp": {
-            "type": "tool"
-          },
           "policies": {
             "inbound": []
+          },
+          "mcp": {
+            "type": "tool"
           }
         }
       }
@@ -232,11 +232,11 @@
               "baseUrl": "https://api.linode.com/v4"
             }
           },
-          "mcp": {
-            "type": "tool"
-          },
           "policies": {
             "inbound": []
+          },
+          "mcp": {
+            "type": "tool"
           }
         }
       },
@@ -295,17 +295,17 @@
               "baseUrl": "https://api.linode.com/v4"
             }
           },
-          "mcp": {
-            "type": "tool"
-          },
           "policies": {
             "inbound": []
+          },
+          "mcp": {
+            "type": "tool"
           }
         }
       },
       "delete": {
         "summary": "Linode Delete",
-        "description": "Permanently deletes a Linode Instance. Destructive and cannot be undone: removes all disks, backups, configs, and IP addresses. **Destructive and requires explicit confirmation**: this call is rejected unless the request body includes `confirm: true`. Only set that after the user has explicitly confirmed they want to delete this specific Linode.",
+        "description": "Permanently deletes a Linode Instance. Destructive and cannot be undone: removes all disks, backups, configs, and IP addresses.",
         "operationId": "deleteLinodeInstance",
         "tags": [
           "Linode Instances"
@@ -331,32 +331,11 @@
               "baseUrl": "https://api.linode.com/v4"
             }
           },
+          "policies": {
+            "inbound": []
+          },
           "mcp": {
             "type": "tool"
-          },
-          "policies": {
-            "inbound": [
-              "require-confirmation-inbound"
-            ]
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "confirm"
-                ],
-                "properties": {
-                  "confirm": {
-                    "type": "boolean",
-                    "description": "Must be true. Only set this after the user has explicitly confirmed deletion of this Linode."
-                  }
-                }
-              }
-            }
           }
         }
       }
@@ -420,11 +399,11 @@
               "baseUrl": "https://api.linode.com/v4"
             }
           },
-          "mcp": {
-            "type": "tool"
-          },
           "policies": {
             "inbound": []
+          },
+          "mcp": {
+            "type": "tool"
           }
         }
       }
@@ -488,11 +467,11 @@
               "baseUrl": "https://api.linode.com/v4"
             }
           },
-          "mcp": {
-            "type": "tool"
-          },
           "policies": {
             "inbound": []
+          },
+          "mcp": {
+            "type": "tool"
           }
         }
       }
@@ -540,11 +519,11 @@
               "baseUrl": "https://api.linode.com/v4"
             }
           },
-          "mcp": {
-            "type": "tool"
-          },
           "policies": {
             "inbound": []
+          },
+          "mcp": {
+            "type": "tool"
           }
         }
       }
@@ -566,7 +545,7 @@
       ],
       "post": {
         "summary": "Linode Resize",
-        "description": "Resizes a Linode Instance to a different Type (plan). Any running/queued actions must finish first, and the account must have no outstanding balance. **Requires explicit confirmation**: this call is rejected unless the request body includes `confirm: true`. Only set that after the user has explicitly confirmed the resize.",
+        "description": "Resizes a Linode Instance to a different Type (plan). Any running/queued actions must finish first, and the account must have no outstanding balance.",
         "operationId": "resizeLinodeInstance",
         "tags": [
           "Linode Instances"
@@ -578,8 +557,7 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "type",
-                  "confirm"
+                  "type"
                 ],
                 "properties": {
                   "type": {
@@ -591,10 +569,6 @@
                     "type": "boolean",
                     "description": "Automatically resize disks to fit the new plan. Defaults to true.",
                     "default": true
-                  },
-                  "confirm": {
-                    "type": "boolean",
-                    "description": "Must be true. Only set this after the user has explicitly confirmed the resize."
                   }
                 }
               }
@@ -622,13 +596,11 @@
               "baseUrl": "https://api.linode.com/v4"
             }
           },
+          "policies": {
+            "inbound": []
+          },
           "mcp": {
             "type": "tool"
-          },
-          "policies": {
-            "inbound": [
-              "require-confirmation-inbound"
-            ]
           }
         }
       }
@@ -706,11 +678,11 @@
               "baseUrl": "https://api.linode.com/v4"
             }
           },
-          "mcp": {
-            "type": "tool"
-          },
           "policies": {
             "inbound": []
+          },
+          "mcp": {
+            "type": "tool"
           }
         }
       }

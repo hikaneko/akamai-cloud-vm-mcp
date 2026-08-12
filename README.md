@@ -19,8 +19,6 @@ Scoped to Compute Instance (VM) lifecycle management, not the full Linode API (a
 | `resizeLinodeInstance` | Resize to a different plan |
 | `cloneLinodeInstance` | Clone to a new or existing instance |
 
-`deleteLinodeInstance` and `resizeLinodeInstance` are destructive, so the gateway rejects them unless the call includes `confirm: true` in the request body — this is enforced server-side by a policy, not just a hint in the tool description, so an MCP client has to explicitly confirm with the user before it can go through.
-
 ## Project structure
 
 This is a standard [Zuplo](https://zuplo.com) API gateway project — everything below `config/` and `modules/` is Zuplo's own project layout, not custom to this repo:
@@ -28,9 +26,9 @@ This is a standard [Zuplo](https://zuplo.com) API gateway project — everything
 | Path | Role |
 | --- | --- |
 | `config/routes.oas.json` | The single source of truth for routing. An OpenAPI document where every path/operation is a route; each carries an `x-zuplo-route` extension describing its handler. This is where both the Linode proxy routes *and* the `/mcp` MCP-server route are defined. |
-| `config/policies.json` | Named, reusable policy instances (auth, rate limiting, transforms, custom code, etc.) that routes reference by name. No auth policies here (auth is passed straight through by clients), but it does register the `require-confirmation-inbound` guardrail used by the destructive Linode operations. |
+| `config/policies.json` | Named, reusable policy instances (auth, rate limiting, transforms, etc.) that routes can reference by name. Empty here — this project intentionally uses no inbound policies, since auth is passed straight through by clients. |
 | `modules/zuplo.runtime.ts` | Gateway-wide setup that runs once at boot: plugin registration (OpenTelemetry tracing, the MCP Gateway plugin scaffold) rather than per-route logic. |
-| `modules/*.ts` | Custom TypeScript code referenced from `config/routes.oas.json` or `config/policies.json` by module path — either a full request handler in place of a declarative proxy, or policy logic like `require-confirmation-inbound.ts`. |
+| `modules/*.ts` | Custom TypeScript request handlers, referenced from `routes.oas.json` by module path when a route needs code instead of a declarative proxy (`urlForwardHandler`). Not used for the Linode routes in this project — they're pure config. |
 | `docs/` | An optional [Zudoku](https://zuplo.com/docs/dev-portal/zudoku/configuration/overview) developer portal (its own `npm` workspace) that renders `config/routes.oas.json` as browsable API reference docs. Not required for the MCP server itself. |
 
 ## Deploy your own copy
