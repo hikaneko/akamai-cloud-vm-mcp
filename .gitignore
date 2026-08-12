@@ -9,3 +9,6 @@ node_modules/
 # OS Stuff
 
 .DS_Store
+
+# Local-only agent instructions, not published to the (public) repo
+CLAUDE.md
