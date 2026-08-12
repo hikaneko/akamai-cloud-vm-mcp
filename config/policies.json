@@ -24,7 +24,8 @@
         "module": "$import(@zuplo/runtime)",
         "options": {
           "allow": [
-            "$env(ALLOWED_IP_1)"
+            "$env(ALLOWED_IP_1)",
+            "$env(ALLOWED_IP_2)"
           ]
         }
       },
