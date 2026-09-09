@@ -1,0 +1,17 @@
+# Overview
+
+Akamai Cloud VM MCP is an MCP server, built on [Zuplo](https://zuplo.com), that exposes Linode (Akamai Cloud Computing) Compute Instance management as tools for MCP clients such as Claude Desktop.
+
+## Scope
+
+This gateway is deliberately scoped to Compute Instance (VM) lifecycle management — list, create, view, update, delete, boot, reboot, shutdown, resize, and clone — rather than the full Linode API. A smaller, curated tool set keeps AI tool selection reliable; it is not meant to be a general Linode API proxy.
+
+See the [API Reference](/api) for the full list of available tools, grouped by tag.
+
+## Authentication
+
+Each MCP client brings its own Linode Personal Access Token (PAT). This gateway never stores or has access to your credentials — it forwards your `Authorization` header straight through to `api.linode.com`. See [Connect from Claude Desktop](/connect-claude-desktop) for setup details.
+
+## More detail
+
+For project structure, self-hosting/deploy instructions, and how to extend this gateway with additional operations, see the [repository README on GitHub](https://github.com/hikaneko/akamai-cloud-vm-mcp).
