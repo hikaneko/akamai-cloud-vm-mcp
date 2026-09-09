@@ -2,8 +2,19 @@
   "openapi": "3.1.0",
   "info": {
     "version": "0.1.0",
-    "title": "Akamai Cloud VM MCP"
+    "title": "Akamai Cloud VM MCP",
+    "description": "An MCP server exposing Linode (Akamai Cloud Computing) Compute Instance lifecycle management: list, create, view, update, delete, boot, reboot, shutdown, resize, and clone. Scope is deliberately curated to Compute Instances only, not the full Linode API. Authentication is per-client passthrough — each caller supplies their own Linode Personal Access Token as an `Authorization: Bearer <token>` header, which is forwarded to the Linode API untouched; this gateway stores no secrets."
   },
+  "tags": [
+    {
+      "name": "Linode Instances",
+      "description": "Lifecycle management for Linode Compute Instances: list, create, view, update, delete, boot, reboot, shutdown, resize, and clone."
+    },
+    {
+      "name": "MCP Server",
+      "description": "The MCP protocol endpoint used by MCP clients (e.g. Claude Desktop) to invoke the Linode Instance tools above."
+    }
+  ],
   "paths": {
     "/linode/instances": {
       "x-zuplo-path": {
@@ -693,6 +704,7 @@
       "post": {
         "summary": "Akamai Cloud VM MCP Server",
         "description": "MCP endpoint exposing Linode Compute Instance management as tools. Clients must send their own Linode Personal Access Token as an `Authorization: Bearer <token>` header; it is forwarded untouched to the Linode API and never stored by this gateway.",
+        "tags": ["MCP Server"],
         "x-zuplo-route": {
           "corsPolicy": "none",
           "handler": {

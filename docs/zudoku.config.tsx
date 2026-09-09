@@ -1,5 +1,3 @@
-// import { zuploMonetizationPlugin } from "@zuplo/zudoku-plugin-monetization";
-// import { graphqlPlugin } from "@zudoku/plugin-graphql";
 import type { ZudokuConfig } from "zudoku";
 
 /**
@@ -9,17 +7,11 @@ import type { ZudokuConfig } from "zudoku";
  */
 const config: ZudokuConfig = {
   site: {
-    title: "My Developer Portal",
-    logo: {
-      src: {
-        light: "https://cdn.zuplo.com/assets/my-dev-portal-light.svg",
-        dark: "https://cdn.zuplo.com/assets/my-dev-portal-dark.svg",
-      },
-    },
+    title: "Akamai Cloud VM MCP",
   },
   metadata: {
-    title: "Developer Portal",
-    description: "Developer Portal",
+    title: "Akamai Cloud VM MCP",
+    description: "MCP server exposing Linode Compute Instance lifecycle management.",
   },
   navigation: [
     {
@@ -27,37 +19,14 @@ const config: ZudokuConfig = {
       label: "Documentation",
       items: [
         {
-          type: "category",
-          label: "Getting Started",
-          icon: "sparkles",
-          items: [
-            {
-              type: "doc",
-              file: "introduction",
-            },
-            {
-              type: "doc",
-              file: "markdown",
-            },
-          ],
+          type: "doc",
+          file: "overview",
+          label: "Overview",
         },
         {
-          type: "category",
-          label: "Useful Links",
-          collapsible: false,
-          icon: "link",
-          items: [
-            {
-              type: "link",
-              label: "Zuplo Docs",
-              to: "https://zuplo.com/docs/dev-portal/introduction",
-            },
-            {
-              type: "link",
-              label: "Developer Portal Docs",
-              to: "https://zuplo.com/docs/dev-portal/introduction",
-            },
-          ],
+          type: "doc",
+          file: "connect-claude-desktop",
+          label: "Connect from Claude Desktop",
         },
       ],
     },
@@ -75,31 +44,13 @@ const config: ZudokuConfig = {
       path: "api",
     },
   ],
-  authentication: {
-    // IMPORTANT: This is a demo Auth0 configuration.
-    // In a real application, you should replace these values with your own
-    // identity provider's configuration.
-    // This configuration WILL NOT WORK with custom domains.
-    // For more information, see:
-    // https://zuplo.com/docs/dev-portal/zudoku/configuration/authentication
-    type: "auth0",
-    domain: "auth.zuplo.site",
-    clientId: "f8I87rdsCRo4nU2FHf0fHVwA9P7xi7Ml",
-    audience: "https://api.example.com/",
-  },
+  // No inbound auth on this gateway — each MCP client supplies its own
+  // Linode Personal Access Token via Authorization: Bearer passthrough.
+  // Auth0 login and API-key issuance don't correspond to anything real here.
   apiKeys: {
-    enabled: true,
+    enabled: false,
   },
-  plugins: [
-    // Uncomment to document a GraphQL API:
-    // graphqlPlugin({
-    //   path: "/graphql",
-    //   schema: "./schema.graphql",
-    //   endpoint: "/graphql", // (optional, default: "/graphql")
-    // }),
-    // Uncomment to enable monetization:
-    // zuploMonetizationPlugin(),
-  ],
+  plugins: [],
 };
 
 export default config;

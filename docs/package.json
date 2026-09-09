@@ -9,8 +9,6 @@
   },
   "dependencies": {
     "@mdx-js/react": "3.0.1",
-    "@zudoku/plugin-graphql": "^0.0",
-    "@zuplo/zudoku-plugin-monetization": "^0.0",
     "react": "^19",
     "react-dom": "^19",
     "zudoku": "^0.83"

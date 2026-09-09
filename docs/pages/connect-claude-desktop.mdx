@@ -1,0 +1,38 @@
+# Connect from Claude Desktop
+
+This gateway has no built-in login or API key issuance — the "Sign in" / API key flows you may see on other Zuplo developer portals are disabled here on purpose, because auth works differently for this project. See [Authentication](#authentication) below.
+
+## Steps
+
+1. Create a Linode Personal Access Token (Linode Cloud Manager → *My Profile* → *API Tokens* → *Create a Personal Access Token*) with at least `linodes:read_write` scope.
+2. Add an entry to `claude_desktop_config.json` using [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) to bridge Claude Desktop to the remote MCP endpoint with your token as a header:
+
+   ```json
+   {
+     "mcpServers": {
+       "akamai-cloud-vm": {
+         "command": "npx",
+         "args": [
+           "-y",
+           "mcp-remote",
+           "https://<your-project>.zuplo.app/mcp",
+           "--header",
+           "Authorization: Bearer ${LINODE_TOKEN}"
+         ],
+         "env": {
+           "LINODE_TOKEN": "<your Linode Personal Access Token>"
+         }
+       }
+     }
+   }
+   ```
+
+3. Restart Claude Desktop.
+
+## Authentication
+
+Each MCP client supplies its own Linode Personal Access Token as an `Authorization: Bearer <token>` header on every request. There is no shared or stored token — this gateway holds no secrets and has no inbound authentication policy of its own; your token is forwarded untouched to `api.linode.com`.
+
+## Connection refused?
+
+Some deployments of this gateway restrict access to an IP allowlist. If your connection is rejected, check with whoever operates the gateway you're connecting to — the allowed IP addresses are configured per-environment and are not published here.
