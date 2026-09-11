@@ -31,6 +31,19 @@
       },
       "name": "ip-address-restriction-inbound",
       "policyType": "ip-address-restriction-inbound"
+    },
+    {
+      "handler": {
+        "export": "default",
+        "module": "$import(./modules/loki-audit-logging)",
+        "options": {
+          "endpoint": "$env(LOKI_PUSH_URL)",
+          "username": "$env(LOKI_PUSH_USERNAME)",
+          "password": "$env(LOKI_PUSH_PASSWORD)"
+        }
+      },
+      "name": "loki-audit-logging-inbound",
+      "policyType": "custom-code-inbound"
     }
   ]
 }

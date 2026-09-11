@@ -759,6 +759,7 @@
           },
           "policies": {
             "inbound": [
+              "loki-audit-logging-inbound",
               "ip-address-restriction-inbound"
             ]
           }
