@@ -704,7 +704,9 @@
       "post": {
         "summary": "Akamai Cloud VM MCP Server",
         "description": "MCP endpoint exposing Linode Compute Instance management as tools. Clients must send their own Linode Personal Access Token as an `Authorization: Bearer <token>` header; it is forwarded untouched to the Linode API and never stored by this gateway.",
-        "tags": ["MCP Server"],
+        "tags": [
+          "MCP Server"
+        ],
         "x-zuplo-route": {
           "corsPolicy": "none",
           "handler": {
@@ -759,8 +761,7 @@
           },
           "policies": {
             "inbound": [
-              "loki-audit-logging-inbound",
-              "ip-address-restriction-inbound"
+              "loki-audit-logging-inbound"
             ]
           }
         },
