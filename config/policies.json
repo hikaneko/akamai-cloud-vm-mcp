@@ -20,20 +20,6 @@
     },
     {
       "handler": {
-        "export": "IpAddressRestrictionInboundPolicy",
-        "module": "$import(@zuplo/runtime)",
-        "options": {
-          "allow": [
-            "$env(ALLOWED_IP_1)",
-            "$env(ALLOWED_IP_2)"
-          ]
-        }
-      },
-      "name": "ip-address-restriction-inbound",
-      "policyType": "ip-address-restriction-inbound"
-    },
-    {
-      "handler": {
         "export": "default",
         "module": "$import(./modules/loki-audit-logging)",
         "options": {
